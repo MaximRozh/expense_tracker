@@ -22,7 +22,7 @@ const NewExpense: FC<NewExpenseProp> = ({ onAddExpense }) => {
 
   return (
     <div className="new-expense">
-      {!isEditing && <button onClick={startEditingHandler}>Add Expense</button>}
+      {!isEditing && <button className="button" onClick={startEditingHandler}>Add Expense</button>}
       {isEditing && (
         <ExpenseForm
           onSaveExpenseData={saveExpenseDataHandler}

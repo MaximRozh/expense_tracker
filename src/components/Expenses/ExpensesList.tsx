@@ -3,11 +3,11 @@ import ExpenseItem from "./ExpenseItem";
 import { FC } from "react";
 import { ExpenseModel } from "../../models/ExpenseModel";
 
-type ExpensesList = {
+type ExpensesListProp = {
   filtredExpense: ExpenseModel[]
 }
 
-const ExpensesList:FC<ExpensesList> = ({ filtredExpense }) => {
+const ExpensesList:FC<ExpensesListProp> = ({ filtredExpense }) => {
   if (filtredExpense.length === 0) {
     return <h2 className="expenses-list__fallback">Found no expense</h2>;
   }
@@ -19,7 +19,7 @@ const ExpensesList:FC<ExpensesList> = ({ filtredExpense }) => {
           amount={item.amount}
           date={item.date}
           key={item.id}
-        ></ExpenseItem>
+        />
       ))}
     </ul>
   );

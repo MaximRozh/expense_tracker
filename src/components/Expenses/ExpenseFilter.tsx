@@ -1,28 +1,21 @@
 import React, { FC } from "react";
+import ViewsDatePicker from "../UI/DataPickerNew";
 
 import "./Styles/ExpenseFilter.css";
 
-type ExpensesFilter = {
+type ExpensesFilterProp = {
   selected: string;
   onChangeFilter: (selectedYear:string) => void;
 }
 
-const ExpensesFilter:FC<ExpensesFilter> = ({ selected, onChangeFilter }) => {
-  const choseValue = (selectedYear: string) => {
-    onChangeFilter(selectedYear);
-  };
-
+const ExpensesFilter:FC<ExpensesFilterProp> = ({ selected, onChangeFilter }) => {
   return (
     <div className="expenses-filter">
       <div className="expenses-filter__control">
         <label>Filter by year</label>
-        <select value={selected} onChange={ e => choseValue(e.target.value)}>
-          <option value="2022">2022</option>
-          <option value="2021">2021</option>
-          <option value="2020">2020</option>
-          <option value="2019">2019</option>
-        </select>
+        <ViewsDatePicker selected={selected} choseValue={onChangeFilter} viewsArr={['year']} label="Select year" />
       </div>
+      
     </div>
   );
 };

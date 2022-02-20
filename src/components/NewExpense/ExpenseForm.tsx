@@ -1,36 +1,54 @@
-import React, { ChangeEvent, FC, FormEvent, useState } from "react";
+import { Box, TextField } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import React, { FC, FormEvent, useState } from "react";
 import { ExpenseModel } from "../../models/ExpenseModel";
+import ViewsDatePicker from "../UI/DataPickerNew";
 import "./Styles/ExpenseForm.css";
 
+const useStyles = makeStyles({
+  root: {
+    background: 'white',
+    borderRadius: 10,
+    height: 56,
+    width: 320,
+    "& .MuiFormControl-root": {
+      width: '100%',
+      '& .MuiInputLabel-root': {
+        color: 'black',
+      },
+      "& .MuiOutlinedInput-notchedOutline": {
+        border: 'none',
+      }
+    }
+  }
+})
 
 type ExpenseFormProp = {
   onSaveExpenseData: (expensedData: ExpenseModel) => void;
   startEditingHandler: () => void;
 }
 
-const ExpenseForm:FC<ExpenseFormProp> = ({ onSaveExpenseData, startEditingHandler }) => {
-  const [userInput, setUserInput] = useState({
-    enteredTitle: "",
-    enteredAmount: "",
-    enteridDate: "",
-  });
+const initialValues = {
+  enteredTitle: "",
+  enteredAmount: "",
+  enteridDate: "",
+}
 
-  const titleChangeHandler = (e:ChangeEvent<HTMLInputElement>) => {
-    setUserInput((prev) => {
-      return { ...prev, enteredTitle: e.target.value };
-    });
+const ExpenseForm:FC<ExpenseFormProp> = ({ onSaveExpenseData, startEditingHandler }) => {
+  const [userInput, setUserInput] = useState(initialValues);
+
+  const classes = useStyles()
+
+  const dateChangeHandler = (date:any) => {
+    setUserInput((prev) => ({ ...prev, enteridDate: date }));
   };
-  const amountChangeHandler = (e:ChangeEvent<HTMLInputElement>) => {
-    setUserInput((prev) => {
-      return { ...prev, enteredAmount: e.target.value };
-    });
-  };
-  const dateChangeHandler = (e:ChangeEvent<HTMLInputElement>) => {
-    setUserInput((prev) => {
-      return { ...prev, enteridDate: e.target.value };
-    });
-  };
-  const changeView = () => {
+
+  const changeHandler = (name:string) => (e:any) => {
+    setUserInput((prev) => ({ ...prev, [name]: e.target.value }));
+  }
+
+  const changeView = (e:any) => {
+    e.preventDefault();
     startEditingHandler();
   };
 
@@ -42,43 +60,24 @@ const ExpenseForm:FC<ExpenseFormProp> = ({ onSaveExpenseData, startEditingHandle
       date: new Date(userInput.enteridDate),
       id: Date.now(),
     });
-    setUserInput({ enteredTitle: "", enteredAmount: "", enteridDate: "" });
+    setUserInput(initialValues);
   };
   return (
     <form onSubmit={submitHandler}>
       <div className="new-expense__controls">
-        <div className="new-expense__control">
-          <label>Title</label>
-          <input
-            type="text"
-            value={userInput.enteredTitle}
-            onChange={titleChangeHandler}
-          />
-        </div>
-        <div className="new-expense__control">
-          <label>Amount</label>
-          <input
-            type="number"
-            value={userInput.enteredAmount}
-            min="0.01"
-            step="0.01"
-            onChange={amountChangeHandler}
-          />
-        </div>
-        <div className="new-expense__control">
-          <label>Date</label>
-          <input
-            type="date"
-            value={userInput.enteridDate}
-            min="2019-01-01"
-            max="2022-12-31"
-            onChange={dateChangeHandler}
-          />
+      <Box className={classes.root}>
+        <TextField variant="outlined" label='Title' onChange={(e) => changeHandler('enteredTitle')(e)}/>
+      </Box>
+      <Box className={classes.root}>
+        <TextField variant="outlined" type='number' label='Amount' onChange={(e) => changeHandler('enteredAmount')(e)}/>
+      </Box>
+        <div className="new-expense__data-picker">
+        <ViewsDatePicker selected={userInput.enteridDate} choseValue={dateChangeHandler} viewsArr={['year', 'month', 'day']}/>
         </div>
       </div>
       <div className="new-expense__actions">
-        <button onClick={changeView}>Cancel</button>
-        <button type="submit">Add Expense</button>
+        <button className="button" onClick={changeView}>Cancel</button>
+        <button className="button" type="submit">Add Expense</button>
       </div>
     </form>
   );

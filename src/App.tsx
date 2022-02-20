@@ -34,7 +34,7 @@ function App() {
 
   return (
     <div>
-      <h2>Let's get started!</h2>
+      <h2>Tap on button to add new expense or tap on chart bar to see expenses by month</h2>
       <NewExpense onAddExpense={addExpenseHandler}></NewExpense>
       <Expense expenses={expenses}></Expense>
     </div>

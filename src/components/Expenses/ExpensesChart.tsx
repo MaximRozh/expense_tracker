@@ -1,32 +1,42 @@
-import { FC } from "react";
-import { ExpenseModel } from "../../models/ExpenseModel";
-import Chart from "../Chart/Chart";
+import { FC, useMemo, useState } from "react";
+import BarChartWidget from "../Chart/BarChartWidget";
+import PieChartWidget from "../Chart/PieChartWidget";
+import ModalChart from "../Modals/ModalChart";
+import { chartDataPoints } from "./constants";
 
 type ExpensesChartProp = {
   expenses: any
 }
 
 const ExpensesChart:FC<ExpensesChartProp> = ({ expenses }) => {
-  const chartDataPoints = [
-    { label: "Jan", value: 0 },
-    { label: "Feb", value: 0 },
-    { label: "Mar", value: 0 },
-    { label: "Apr", value: 0 },
-    { label: "May", value: 0 },
-    { label: "Jun", value: 0 },
-    { label: "Jul", value: 0 },
-    { label: "Aug", value: 0 },
-    { label: "Sep", value: 0 },
-    { label: "Oct", value: 0 },
-    { label: "Nov", value: 0 },
-    { label: "Dec", value: 0 },
-  ];
-  for (const expense of expenses) {
-    const expenseMonth = expense.date.getMonth();
+  const [modal, setModal] = useState(false)
+  const [value, setValue] = useState([])
 
-    chartDataPoints[expenseMonth].value += +expense.amount;
+  const handleOpen = (val:any) => {
+    setValue(val?.costs)
+    setModal(true)
   }
-  return <Chart dataPoints={chartDataPoints}></Chart>;
+
+  const handleClose = () => {
+    setModal(false)
+  }
+  const getData = useMemo(() => chartDataPoints.reduce((result:any, value:any) => {
+      const month = expenses.filter((item:any) => item.date.getMonth() === value.month)
+      const spending = month.reduce((result:any, value:any ) => result = result + value.amount, 0)
+     
+      return [...result, {...value, spending, costs: [...month]}]
+    },
+    []), [expenses])
+
+
+  return (
+    <>
+      <BarChartWidget dataPoints={getData} handleOpen={handleOpen}/>
+      <ModalChart open={modal} handleClose={handleClose}>
+        <PieChartWidget value={value}/>
+      </ModalChart>
+    </>
+  )
 };
 
 export default ExpensesChart;
